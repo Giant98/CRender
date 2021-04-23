@@ -54,6 +54,7 @@ void triangle(Vec3f* pts, float* zbuffer, TGAImage& image, TGAColor color) {
     Vec2f bboxmin(std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
     Vec2f bboxmax(-std::numeric_limits<float>::max(), -std::numeric_limits<float>::max());
     Vec2f clamp(image.get_width() - 1, image.get_height() - 1);
+    //根据三角形构建矩形范围
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 2; j++) {
             bboxmin[j] = std::max(0.f, std::min(bboxmin[j], pts[i][j]));
@@ -63,10 +64,10 @@ void triangle(Vec3f* pts, float* zbuffer, TGAImage& image, TGAColor color) {
     Vec3f P;
     for (P.x = bboxmin.x; P.x <= bboxmax.x; P.x++) {
         for (P.y = bboxmin.y; P.y <= bboxmax.y; P.y++) {
-            Vec3f bc_screen = barycentric(pts[0], pts[1], pts[2], P);
-            if (bc_screen.x < 0 || bc_screen.y < 0 || bc_screen.z < 0) continue;
+            Vec3f bc_screen = barycentric(pts[0], pts[1], pts[2], P);//找到重心坐标的（1-u-v, u, v）
+            if (bc_screen.x < 0 || bc_screen.y < 0 || bc_screen.z < 0) continue;//判断是否在三角形内部，内部才着色
             P.z = 0;
-            for (int i = 0; i < 3; i++) P.z += pts[i][2] * bc_screen[i];
+            for (int i = 0; i < 3; i++) P.z += pts[i][2] * bc_screen[i];//计算得到P点深度值
             if (zbuffer[int(P.x + P.y * width)] < P.z) {
                 zbuffer[int(P.x + P.y * width)] = P.z;
                 image.set(P.x, P.y, color);
@@ -101,7 +102,7 @@ int main(int argc, char** argv) {
         Vec3f pts[3];
         for (int j=0; j<3; j++) {
             Vec3f v = model->vert(face[j]);
-            pts[j] = world2screen(v);
+            pts[j] = world2screen(v);//转换为屏幕空间坐标
             screen_coords[j] = Vec2i((v.x + 1.) * width / 2., (v.y + 1.) * height / 2.);
             world_coords[j] = v;
         }
