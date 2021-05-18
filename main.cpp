@@ -1,23 +1,54 @@
 #include <vector>
 #include <cmath>
+#include <cstdlib>
 #include <limits>
 #include "tgaimage.h"
 #include "model.h"
 #include "geometry.h"
 
-const int width = 800;
+const TGAColor white = TGAColor(255, 255, 255, 255);
+const TGAColor red   = TGAColor(255, 0,   0,   255);
+const TGAColor green = TGAColor(0, 255, 0, 255);
+Model *model = NULL;
+const int width  = 800;
 const int height = 800;
-const int depth = 255;
 
-Model* model = NULL;
-int* zbuffer = NULL;
-Vec3f light_dir(0, 0, -1);
+//画线函数
+void line(Vec2i p0, Vec2i p1, TGAImage& image, TGAColor color) {
+    bool steep = false;
+    if (std::abs(p0.x - p1.x) < std::abs(p0.y - p1.y)) {//防止斜率大于1
+        std::swap(p0.x, p0.y);
+        std::swap(p1.x, p1.y);
+        steep = true;
+    }
+    if (p0.x > p1.x) {//防止斜率是负
+        std::swap(p0, p1);
+    }
 
-void triangle(Vec3i t0, Vec3i t1, Vec3i t2, Vec2i uv0, Vec2i uv1, Vec2i uv2, TGAImage& image, float intensity, int* zbuffer) {
-    if (t0.y == t1.y && t0.y == t2.y) return; // i dont care about degenerate triangles
-    if (t0.y > t1.y) { std::swap(t0, t1); std::swap(uv0, uv1); }
-    if (t0.y > t2.y) { std::swap(t0, t2); std::swap(uv0, uv2); }
-    if (t1.y > t2.y) { std::swap(t1, t2); std::swap(uv1, uv2); }
+    for (int x = p0.x; x <= p1.x; x++) {
+        float t = (x - p0.x) / (float)(p1.x - p0.x);
+        int y = p0.y * (1. - t) + p1.y * t + .5;
+        if (steep) {
+            image.set(y, x, color);
+        }
+        else {
+            image.set(x, y, color);
+        }
+    }
+}
+
+Vec3f barycentric(Vec3f A, Vec3f B, Vec3f C, Vec3f P) {
+    Vec3f s[2];
+    for (int i = 2; i--; ) {
+        s[i][0] = C[i] - A[i];
+        s[i][1] = B[i] - A[i];
+        s[i][2] = A[i] - P[i];
+    }
+    Vec3f u = cross(s[0], s[1]);
+    if (std::abs(u[2]) > 1e-2) // dont forget that u[2] is integer. If it is zero then triangle ABC is degenerate
+        return Vec3f(1.f - (u.x + u.y) / u.z, u.y / u.z, u.x / u.z);
+    return Vec3f(-1, 1, 1); // in this case generate negative coordinates, it will be thrown away by the rasterizator
+}
 
 void triangle(Vec3f* pts, Vec2f* texts, float* zbuffer, TGAImage& image, float intensity) {
     Vec2f bboxmin(std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
@@ -49,18 +80,22 @@ void triangle(Vec3f* pts, Vec2f* texts, float* zbuffer, TGAImage& image, float i
     }
 }
 
+Vec3f world2screen(Vec3f v) {
+    return Vec3f(int((v.x + 1.) * width / 2. + .5), int((v.y + 1.) * height / 2. + .5), v.z);
+}
+
 int main(int argc, char** argv) {
-    if (2 == argc) {
+
+    TGAImage image(width, height, TGAImage::RGB);
+    //绘制模型
+    if (2==argc) {
         model = new Model(argv[1]);
-    }
-    else {
+    } else {
         model = new Model("obj/african_head.obj");
     }
-
-    zbuffer = new int[width * height];
-    for (int i = 0; i < width * height; i++) {
-        zbuffer[i] = std::numeric_limits<int>::min();
-    }
+    
+    float* zbuffer = new float[width * height];
+    for (int i = width * height; i--; zbuffer[i] = -std::numeric_limits<float>::max());
 
     //漫反射
     Vec3f light_dir(0, 0, -1);
@@ -87,3 +122,4 @@ int main(int argc, char** argv) {
     //delete model;
     return 0;
 }
+
