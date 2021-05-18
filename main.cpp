@@ -50,7 +50,7 @@ Vec3f barycentric(Vec3f A, Vec3f B, Vec3f C, Vec3f P) {
     return Vec3f(-1, 1, 1); // in this case generate negative coordinates, it will be thrown away by the rasterizator
 }
 
-void triangle(Vec3f* pts, float* zbuffer, TGAImage& image, TGAColor color) {
+void triangle(Vec3f* pts, Vec2f* texts, float* zbuffer, TGAImage& image, float intensity) {
     Vec2f bboxmin(std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
     Vec2f bboxmax(-std::numeric_limits<float>::max(), -std::numeric_limits<float>::max());
     Vec2f clamp(image.get_width() - 1, image.get_height() - 1);
@@ -67,10 +67,14 @@ void triangle(Vec3f* pts, float* zbuffer, TGAImage& image, TGAColor color) {
             Vec3f bc_screen = barycentric(pts[0], pts[1], pts[2], P);//找到重心坐标的（1-u-v, u, v）
             if (bc_screen.x < 0 || bc_screen.y < 0 || bc_screen.z < 0) continue;//判断是否在三角形内部，内部才着色
             P.z = 0;
+            Vec2f Ptext(0, 0);
             for (int i = 0; i < 3; i++) P.z += pts[i][2] * bc_screen[i];//计算得到P点深度值
+            for (int i = 0; i < 3; i++) Ptext[0] += texts[i][0] * bc_screen[i];
+            for (int i = 0; i < 3; i++) Ptext[1] += texts[i][1] * bc_screen[i];
             if (zbuffer[int(P.x + P.y * width)] < P.z) {
-                zbuffer[int(P.x + P.y * width)] = P.z;
+                TGAColor color = model->diffuse(Ptext);
                 image.set(P.x, P.y, color);
+                zbuffer[int(P.x + P.y * width)] = P.z;
             }
         }
     }
@@ -97,20 +101,19 @@ int main(int argc, char** argv) {
     Vec3f light_dir(0, 0, -1);
     for (int i=0; i<model->nfaces(); i++) {
         std::vector<int> face = model->face(i);
-        Vec2i screen_coords[3];
+        Vec3f screen_coords[3];
         Vec3f world_coords[3];
-        Vec3f pts[3];
+        Vec2f texts[3];
         for (int j=0; j<3; j++) {
-            Vec3f v = model->vert(face[j]);
-            pts[j] = world2screen(v);//转换为屏幕空间坐标
-            screen_coords[j] = Vec2i((v.x + 1.) * width / 2., (v.y + 1.) * height / 2.);
-            world_coords[j] = v;
+            world_coords[j] = model->vert(face[2 * j]);
+            screen_coords[j] = world2screen(world_coords[j]);//转换为屏幕空间坐标
+            texts[j] = model->uv(face[2 * j + 1]);
         }
         Vec3f n = cross((world_coords[2] - world_coords[0]), (world_coords[1] - world_coords[0]));
         n.normalize();
         float intensity = n * light_dir;
         if (intensity > 0) {
-            triangle(pts, zbuffer, image, TGAColor(intensity * 255, intensity * 255, intensity * 255, 255));
+            triangle(screen_coords, texts, zbuffer, image, intensity);
         }
     }
     
