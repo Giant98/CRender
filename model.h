@@ -2,15 +2,15 @@
 #define __MODEL_H__
 
 #include <vector>
+#include <string>
 #include "geometry.h"
 #include "tgaimage.h"
 
 class Model {
 private:
 	std::vector<Vec3f> verts_;
-	std::vector<std::vector<Vec3i> > faces_; // attention, this Vec3i means vertex/uv/normal
-	std::vector<Vec3f> norms_;
-	std::vector<Vec2f> uv_;
+	std::vector<std::vector<int> > faces_;
+	std::vector<Vec2f>uvs_;
 	TGAImage diffusemap_;
 	void load_texture(std::string filename, const char* suffix, TGAImage& img);
 public:
@@ -19,9 +19,9 @@ public:
 	int nverts();
 	int nfaces();
 	Vec3f vert(int i);
-	Vec2i uv(int iface, int nvert);
-	TGAColor diffuse(Vec2i uv);
+	Vec2f uv(int i);
 	std::vector<int> face(int idx);
+	TGAColor diffuse(Vec2f uv);
 };
 
 #endif //__MODEL_H__
