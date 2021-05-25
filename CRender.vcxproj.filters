@@ -40,5 +40,11 @@
     <Image Include="output.tga">
       <Filter>资源文件</Filter>
     </Image>
+    <Image Include="output_zbuffer.tga">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="output_Perspective.tga">
+      <Filter>资源文件</Filter>
+    </Image>
   </ItemGroup>
 </Project>
