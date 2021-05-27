@@ -144,12 +144,12 @@
     <ClInclude Include="tgaimage.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="geometry.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="model.cpp" />
     <ClCompile Include="tgaimage.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="output.tga" />
     <Image Include="output_Perspective.tga" />
     <Image Include="output_zbuffer.tga" />
   </ItemGroup>

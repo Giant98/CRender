@@ -64,10 +64,10 @@ void viewport(int x, int y, int w, int h) {
     ViewPort = Matrix::identity();
     ViewPort[0][3] = x + w / 2.f;
     ViewPort[1][3] = y + h / 2.f;
-    ViewPort[2][3] = 1.f;
+    ViewPort[2][3] = 255 / 2.f;//方便更好地运用齐次坐标，并且可以生成灰度图像
     ViewPort[0][0] = w / 2.f;
     ViewPort[1][1] = h / 2.f;
-    ViewPort[2][2] = 1.f;
+    ViewPort[2][2] = 255 / 2.f;
 }
 //证明见教程https://github.com/ssloy/tinyrenderer/wiki/Lesson-4:-Perspective-projection
 //coeff为camera处在(0，0，c)
@@ -76,7 +76,7 @@ void projection(float coeff) {
     Projection[3][2] = coeff;
 }
 
-Vec3f barycentric(Vec3f A, Vec3f B, Vec3f C, Vec3f P) {
+Vec3f barycentric(Vec2f A, Vec2f B, Vec2f C, Vec2f P) {
     Vec3f s[2];
     for (int i = 2; i--; ) {
         s[i][0] = C[i] - A[i];
@@ -89,45 +89,42 @@ Vec3f barycentric(Vec3f A, Vec3f B, Vec3f C, Vec3f P) {
     return Vec3f(-1, 1, 1); // in this case generate negative coordinates, it will be thrown away by the rasterizator
 }
 
-void triangle(Vec3f* pts, Vec2f* texts, float* zbuffer, TGAImage& image, float intensity) {
+void triangle(Vec4f* pts, TGAImage& image, TGAImage& zbuffer, TGAColor color) {
     Vec2f bboxmin(std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
     Vec2f bboxmax(-std::numeric_limits<float>::max(), -std::numeric_limits<float>::max());
-    Vec2f clamp(image.get_width() - 1, image.get_height() - 1);
     //根据三角形构建矩形范围
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 2; j++) {
-            bboxmin[j] = std::max(0.f, std::min(bboxmin[j], pts[i][j]));
-            bboxmax[j] = std::min(clamp[j], std::max(bboxmax[j], pts[i][j]));
+            bboxmin[j] = std::min(bboxmin[j], pts[i][j] / pts[i][3]);
+            bboxmax[j] = std::max(bboxmax[j], pts[i][j] / pts[i][3]);
         }
     }
-    Vec3f P;
+    Vec2i P;
     for (P.x = bboxmin.x; P.x <= bboxmax.x; P.x++) {
         for (P.y = bboxmin.y; P.y <= bboxmax.y; P.y++) {
-            Vec3f bc_screen = barycentric(pts[0], pts[1], pts[2], P);//找到重心坐标的（1-u-v, u, v）
-            if (bc_screen.x < 0 || bc_screen.y < 0 || bc_screen.z < 0) continue;//判断是否在三角形内部，内部才着色
-            P.z = 0;
-            Vec2f Ptext(0, 0);
-            for (int i = 0; i < 3; i++) P.z += pts[i][2] * bc_screen[i];//计算得到P点深度值
-            for (int i = 0; i < 3; i++) Ptext[0] += texts[i][0] * bc_screen[i];
-            for (int i = 0; i < 3; i++) Ptext[1] += texts[i][1] * bc_screen[i];
-            if (zbuffer[int(P.x + P.y * width)] < P.z) {
-                TGAColor color = model->diffuse(Ptext);
-                image.set(P.x, P.y, color);
-                zbuffer[int(P.x + P.y * width)] = P.z;
-            }
+            Vec3f c = barycentric(proj<2>(pts[0] / pts[0][3]), proj<2>(pts[1] / pts[1][3]),
+                proj<2>(pts[2] / pts[2][3]), P);//找到重心坐标的（1-u-v, u, v）
+            float z = pts[0][2] * c.x + pts[1][2] * c.y + pts[2][2] * c.z;
+            float w = pts[0][3] * c.x + pts[1][3] * c.y + pts[2][3] * c.z;
+            int frag_depth = std::max(0, std::min(255, int(z / w + .5)));
+            if (c.x < 0 || c.y < 0 || c.z < 0 || zbuffer.get(P.x, P.y)[0] > frag_depth) continue;//判断是否在三角形内部，内部才着色//计算得到P点深度值
+            //for (int i = 0; i < 3; i++) Ptext[0] += texts[i][0] * bc_screen[i];
+            //for (int i = 0; i < 3; i++) Ptext[1] += texts[i][1] * bc_screen[i];
+            image.set(P.x, P.y, color);
+            zbuffer.set(P.x, P.y, TGAColor(frag_depth));
         }
     }
 }
 
-Vec3f world2screen(Vec3f v) {
+Vec4f world2screen(Vec3f v) {
     Vec4f gl_vertex = embed<4>(v); // embed Vec3f to homogenius coordinates
     gl_vertex = ViewPort * Projection * ModelView * gl_vertex; // transform it to screen coordinates
-    Vec3f v3 = proj<3>(gl_vertex / gl_vertex[3]); // transfromed vec3f vertex
-    return Vec3f(int(v3.x + .5), int(v3.y + .5), v3.z);
+    return gl_vertex;
 }
 
 int main(int argc, char** argv) {
     TGAImage image(width, height, TGAImage::RGB);
+    TGAImage zbuffer(width, height, TGAImage::GRAYSCALE);
     //绘制模型
     if (2==argc) {
         model = new Model(argv[1]);
@@ -135,9 +132,6 @@ int main(int argc, char** argv) {
         model = new Model("obj/african_head.obj");
     }
     
-    float* zbuffer = new float[width * height];
-    for (int i = width * height; i--; zbuffer[i] = -std::numeric_limits<float>::max());
-    //变换矩阵
     lookat(eye, center, up);
     viewport(width / 8, height / 8, width * 3 / 4, height * 3 / 4);
     projection(-1.f / 3);
@@ -145,24 +139,26 @@ int main(int argc, char** argv) {
     //漫反射
     for (int i=0; i<model->nfaces(); i++) {
         std::vector<int> face = model->face(i);
-        Vec3f screen_coords[3];
+        Vec4f screen_coords[3];
         Vec3f world_coords[3];
-        Vec2f texts[3];
+        //Vec2f texts[3];
         for (int j=0; j<3; j++) {
             world_coords[j] = model->vert(face[2 * j]);
             screen_coords[j] = world2screen(world_coords[j]);//转换为屏幕空间坐标
-            texts[j] = model->uv(face[2 * j + 1]);
+            //texts[j] = model->uv(face[2 * j + 1]);
         }
         Vec3f n = cross((world_coords[2] - world_coords[0]), (world_coords[1] - world_coords[0]));
         n.normalize();
         float intensity = n * light_dir;
         if (intensity > 0) {
-            triangle(screen_coords, texts, zbuffer, image, intensity);
+            triangle(screen_coords, image, zbuffer, TGAColor(intensity * 255, intensity * 255, intensity * 255, 255));
         }
     }
     
     image.flip_vertically(); // 上下翻转
-    image.write_tga_file("output_Perspective.tga");
+    zbuffer.flip_vertically();
+    image.write_tga_file("output_simple.tga");
+    zbuffer.write_tga_file("zbuffer.tga");
     //delete model;
     return 0;
 }
