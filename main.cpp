@@ -75,7 +75,7 @@ void projection(float coeff) {
     Projection = Matrix::identity();
     Projection[3][2] = coeff;
 }
-
+//可参见闫令琪教程进一步了解
 Vec3f barycentric(Vec2f A, Vec2f B, Vec2f C, Vec2f P) {
     Vec3f s[2];
     for (int i = 2; i--; ) {
