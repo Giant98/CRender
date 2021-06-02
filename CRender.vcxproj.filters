@@ -24,6 +24,9 @@
     <ClInclude Include="tgaimage.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="our_gl.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -38,12 +41,18 @@
     <ClCompile Include="geometry.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="our_gl.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="output_zbuffer.tga">
       <Filter>资源文件</Filter>
     </Image>
     <Image Include="output_Perspective.tga">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="output_simple.tga">
       <Filter>资源文件</Filter>
     </Image>
   </ItemGroup>
