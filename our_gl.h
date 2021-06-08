@@ -14,8 +14,8 @@ void lookat(Vec3f eye, Vec3f center, Vec3f up);
 struct IShader
 {
 	virtual ~IShader();
-	virtual Vec4f vertex(int iface, int nthvert) = 0;
-	virtual bool fragment(Vec3f bar, TGAColor& color) = 0;
+	virtual Vec4f vertex(int iface, int nthvert) = 0;//顶点着色器
+	virtual bool fragment(Vec3f bar, TGAColor& color) = 0;//片段着色器
 };
 
 void triangle(Vec4f* pts, IShader& shader, TGAImage& image, TGAImage& zbuffer);

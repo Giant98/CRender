@@ -57,15 +57,15 @@ int Model::nfaces() {
     return (int)faces_.size();
 }
 
-Vec3f Model::vert(int iface, int nthvert) {
+Vec3f Model::vert(int iface, int nthvert) {//获取顶点编号
     return verts_[faces_[iface][nthvert][0]];
 }
 
-Vec2f Model::uv(int iface, int nthvert) {
+Vec2f Model::uv(int iface, int nthvert) {//获取顶点对应纹理坐标编号
     return uvs_[faces_[iface][nthvert][1]];
 }
 
-Vec3f Model::normal(int iface, int nthvert) {
+Vec3f Model::normal(int iface, int nthvert) {//获取顶点法向量编号
     int idx = faces_[iface][nthvert][2];
     return norms_[idx].normalize();
 }

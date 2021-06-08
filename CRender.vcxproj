@@ -152,9 +152,11 @@
     <ClCompile Include="tgaimage.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="output_advance.tga" />
     <Image Include="output_Perspective.tga" />
     <Image Include="output_simple.tga" />
     <Image Include="output_zbuffer.tga" />
+    <Image Include="zbuffer_advance.tga" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

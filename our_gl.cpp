@@ -3,9 +3,9 @@
 #include <cstdlib>
 #include "our_gl.h"
 
-Matrix ModelView;
-Matrix ViewPort;
-Matrix Projection;
+Matrix ModelView;//模型(局部空间到世界空间坐标)
+Matrix ViewPort;//观察(变换到camera坐标,也就是观察空间)
+Matrix Projection;//投影矩阵(将3D坐标投影到容易映射到2D的标准化设备坐标系中,裁剪超出范围的坐标,有正射和透视投影)
 
 IShader::~IShader() {}
 
