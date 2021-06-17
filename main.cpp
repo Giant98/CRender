@@ -16,11 +16,11 @@ Vec3f       eye(0, -1,  3);
 Vec3f    center(0,  0,  0);
 Vec3f        up(0,  1,  0);
 
-struct FlatShader : public IShader
+struct FlatShader : public IShader//目前方案为Flat Shading
 {
     mat<3, 3, float>varying_tri;//我们叫这个为 varying_tri 是因为 varying是GLSL中的保留字
 
-    virtual Vec4f vertex(int iface, int nthvert) {
+    virtual Vec4f vertex(int iface, int nthvert) {//顶点着色器
         Vec4f gl_vertex = embed<4>(model->vert(iface,nthvert));
         gl_vertex = Projection * ModelView * gl_vertex; 
         varying_tri.set_col(nthvert, proj<3>(gl_vertex / gl_vertex[3]));//记录transform后的三角形，这个在我们片段着色器决定三角形的颜色的时候使用来使用
@@ -28,7 +28,7 @@ struct FlatShader : public IShader
         return gl_vertex;
     }
 
-    virtual bool fragment(Vec3f bar, TGAColor& color) {
+    virtual bool fragment(Vec3f bar, TGAColor& color) {//片段着色器
         Vec3f n = cross(varying_tri.col(1) - varying_tri.col(0), varying_tri.col(2) -
             varying_tri.col(0)).normalize();//计算法向量
         float intensity = CLAMP(n * light_dir);// 光强度clamp到0，1之间
