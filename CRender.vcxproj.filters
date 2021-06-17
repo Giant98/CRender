@@ -55,10 +55,16 @@
     <Image Include="output_simple.tga">
       <Filter>资源文件</Filter>
     </Image>
-    <Image Include="output_advance.tga">
+    <Image Include="output_Flat.tga">
       <Filter>资源文件</Filter>
     </Image>
-    <Image Include="zbuffer_advance.tga">
+    <Image Include="zbuffer_Flat.tga">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="output_Gouraud.tga">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="zbuffer_Gouraud.tga">
       <Filter>资源文件</Filter>
     </Image>
   </ItemGroup>
