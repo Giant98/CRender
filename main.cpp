@@ -21,6 +21,7 @@ struct GouraudShader : public IShader//目前方案为Flat Shading
     //mat<3, 3, float>varying_tri;//我们叫这个为 varying_tri 是因为 varying是GLSL中的保留字
     Vec3f varying_intensity; // write by vertex shader, read by fragment shader
 
+    //iface三角面片索引，nthvert对应f数据中的索引号
     virtual Vec4f vertex(int iface, int nthvert) {//顶点着色器
         Vec4f gl_vertex = embed<4>(model->vert(iface,nthvert));
         gl_vertex = ViewPort * Projection * ModelView * gl_vertex;
@@ -55,7 +56,7 @@ int main(int argc, char** argv) {
         std::vector<int> face = model->face(i);
         Vec4f screen_coords[3];
         for (int j = 0; j < 3; j++) {
-            screen_coords[j] = shader.vertex(i, j);//处理每个三角形
+            screen_coords[j] = shader.vertex(i, j);//处理每个三角形，将三个顶点的intensity数据算好，返回转换后坐标
         }
         triangle(screen_coords, shader, image, zbuffer);
     }
