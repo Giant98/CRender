@@ -67,5 +67,11 @@
     <Image Include="zbuffer_Gouraud.tga">
       <Filter>资源文件</Filter>
     </Image>
+    <Image Include="output_Gouraud_withtexture.tga">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="zbuffer_Gouraud_withtexture.tga">
+      <Filter>资源文件</Filter>
+    </Image>
   </ItemGroup>
 </Project>

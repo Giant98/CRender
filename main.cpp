@@ -16,13 +16,14 @@ Vec3f       eye(0, -1,  3);
 Vec3f    center(0,  0,  0);
 Vec3f        up(0,  1,  0);
 
-struct GouraudShader : public IShader//目前方案为Flat Shading
+struct Shader : public IShader//目前方案为GouraudShading
 {
-    //mat<3, 3, float>varying_tri;//我们叫这个为 varying_tri 是因为 varying是GLSL中的保留字
     Vec3f varying_intensity; // write by vertex shader, read by fragment shader
+    mat<2, 3, float>varying_uv;
 
     //iface三角面片索引，nthvert对应f数据中的索引号
     virtual Vec4f vertex(int iface, int nthvert) {//顶点着色器
+        varying_uv.set_col(nthvert, model->uv(iface, nthvert));
         Vec4f gl_vertex = embed<4>(model->vert(iface,nthvert));
         gl_vertex = ViewPort * Projection * ModelView * gl_vertex;
         varying_intensity[nthvert] = CLAMP(model->normal(iface, nthvert) * light_dir); // diffuse light intensity
@@ -31,7 +32,8 @@ struct GouraudShader : public IShader//目前方案为Flat Shading
 
     virtual bool fragment(Vec3f bar, TGAColor& color) {//片段着色器
         float intensity = varying_intensity * bar; //当前像素的插值强度
-        color = TGAColor(255, 255, 255) * intensity;
+        Vec2f uv = varying_uv * bar;//纹理坐标插值
+        color = model->diffuse(uv) * intensity;
         return false;
     }
 };
@@ -51,7 +53,7 @@ int main(int argc, char** argv) {
     TGAImage image(width, height, TGAImage::RGB);
     TGAImage zbuffer(width, height, TGAImage::GRAYSCALE);
 
-    GouraudShader shader;
+    Shader shader;
     for (int i = 0; i < model->nfaces(); i++) {
         std::vector<int> face = model->face(i);
         Vec4f screen_coords[3];
@@ -63,8 +65,8 @@ int main(int argc, char** argv) {
     
     image.flip_vertically(); // 上下翻转
     zbuffer.flip_vertically();
-    image.write_tga_file("output_Gouraud.tga");
-    zbuffer.write_tga_file("zbuffer_Gouraud.tga");
+    image.write_tga_file("output_Gouraud_withtexture.tga");
+    zbuffer.write_tga_file("zbuffer_Gouraud_withtexture.tga");
 
     delete model;
     return 0;

@@ -78,8 +78,6 @@ void triangle(Vec4f* pts, IShader& shader, TGAImage& image, TGAImage& zbuffer) {
             float w = pts[0][3] * c.x + pts[1][3] * c.y + pts[2][3] * c.z;
             int frag_depth = std::max(0, std::min(255, int(z / w + .5)));
             if (c.x < 0 || c.y < 0 || c.z < 0 || zbuffer.get(P.x, P.y)[0] > frag_depth) continue;
-            //for (int i = 0; i < 3; i++) Ptext[0] += texts[i][0] * bc_screen[i];
-            //for (int i = 0; i < 3; i++) Ptext[1] += texts[i][1] * bc_screen[i];
             bool discard = shader.fragment(c, color);
             if (!discard) {
                 zbuffer.set(P.x, P.y, TGAColor(frag_depth));
