@@ -42,6 +42,7 @@ Model::Model(const char* filename) : verts_(), uvs_(), norms_(), faces_(), diffu
         }    
     }
     load_texture(filename, "_diffuse.tga", diffusemap_);
+    load_texture(filename, "_nm.tga", normalmap_);
     std::cerr << "# v#" << verts_.size() << " f# " << faces_.size() << " vt# " <<
         uvs_.size() << " vn# " << norms_.size() << std::endl;
 }
@@ -63,6 +64,16 @@ Vec3f Model::vert(int iface, int nthvert) {//获取顶点编号
 
 Vec2f Model::uv(int iface, int nthvert) {//获取顶点对应纹理坐标编号
     return uvs_[faces_[iface][nthvert][1]];
+}
+
+Vec3f Model::normal(Vec2f uvf) {
+    Vec2i uv(uvf[0] * normalmap_.get_width(), uvf[1] * normalmap_.get_height());
+    TGAColor c = normalmap_.get(uv[0], uv[1]);
+    Vec3f res;
+    // notice TGAColor is bgra, and in byte
+    for (int i = 0; i < 3; i++)
+        res[2 - i] = (float)c[i] / 255.f * 2.f - 1.f;
+    return res;
 }
 
 Vec3f Model::normal(int iface, int nthvert) {//获取顶点法向量编号

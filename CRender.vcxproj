@@ -154,13 +154,13 @@
   <ItemGroup>
     <Image Include="output_Flat.tga" />
     <Image Include="output_Gouraud.tga" />
-    <Image Include="output_Gouraud_withtexture.tga" />
+    <Image Include="output_Gouraud_normal.tga" />
     <Image Include="output_Perspective.tga" />
     <Image Include="output_simple.tga" />
     <Image Include="output_zbuffer.tga" />
     <Image Include="zbuffer_Flat.tga" />
     <Image Include="zbuffer_Gouraud.tga" />
-    <Image Include="zbuffer_Gouraud_withtexture.tga" />
+    <Image Include="zbuffer_Gouraud_normal.tga" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

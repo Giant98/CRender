@@ -20,19 +20,21 @@ struct Shader : public IShader//目前方案为GouraudShading
 {
     Vec3f varying_intensity; // write by vertex shader, read by fragment shader
     mat<2, 3, float>varying_uv;
+    mat<4, 4, float> uniform_M; //Projection*ModelView
+    mat<4, 4, float> uniform_MIT; // (Projection*ModelView).invert_transpose()
 
     //iface三角面片索引，nthvert对应f数据中的索引号
     virtual Vec4f vertex(int iface, int nthvert) {//顶点着色器
         varying_uv.set_col(nthvert, model->uv(iface, nthvert));
         Vec4f gl_vertex = embed<4>(model->vert(iface,nthvert));
-        gl_vertex = ViewPort * Projection * ModelView * gl_vertex;
-        varying_intensity[nthvert] = CLAMP(model->normal(iface, nthvert) * light_dir); // diffuse light intensity
-        return gl_vertex;
+        return ViewPort * Projection * ModelView * gl_vertex;
     }
 
     virtual bool fragment(Vec3f bar, TGAColor& color) {//片段着色器
-        float intensity = varying_intensity * bar; //当前像素的插值强度
         Vec2f uv = varying_uv * bar;//纹理坐标插值
+        Vec3f n = proj<3>(uniform_MIT * embed<4>(model->normal(uv))).normalize(); // transform normal vector
+        Vec3f l = proj<3>(uniform_M * embed<4>(light_dir)).normalize(); // transfrom light direction
+        float intensity = std::max(0.f, n * l);
         color = model->diffuse(uv) * intensity;
         return false;
     }
@@ -49,11 +51,14 @@ int main(int argc, char** argv) {
     lookat(eye, center, up);
     viewport(width / 8, height / 8, width * 3 / 4, height * 3 / 4);
     projection(-1.f / (eye - center).norm());
+    light_dir.normalize();
 
     TGAImage image(width, height, TGAImage::RGB);
     TGAImage zbuffer(width, height, TGAImage::GRAYSCALE);
 
     Shader shader;
+    shader.uniform_M = Projection * ModelView;
+    shader.uniform_MIT = (Projection * ModelView).invert_transpose();
     for (int i = 0; i < model->nfaces(); i++) {
         std::vector<int> face = model->face(i);
         Vec4f screen_coords[3];
@@ -65,8 +70,8 @@ int main(int argc, char** argv) {
     
     image.flip_vertically(); // 上下翻转
     zbuffer.flip_vertically();
-    image.write_tga_file("output_Gouraud_withtexture.tga");
-    zbuffer.write_tga_file("zbuffer_Gouraud_withtexture.tga");
+    image.write_tga_file("output_Gouraud_normal.tga");
+    zbuffer.write_tga_file("zbuffer_Gouraud_normal.tga");
 
     delete model;
     return 0;
