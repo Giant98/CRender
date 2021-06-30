@@ -102,3 +102,8 @@ TGAColor Model::diffuse(Vec2f uv) {
     Vec2i uvwh(uv[0] * diffusemap_.get_width(), uv[1] * diffusemap_.get_height());
     return diffusemap_.get(uvwh[0], uvwh[1]);
 }
+
+float Model::specular(Vec2f uvf) {
+    Vec2i uv(uvf[0] * specularmap_.get_width(), uvf[1] * specularmap_.get_height());
+    return specularmap_.get(uv[0], uv[1])[0] / 1.f;
+}

@@ -34,8 +34,12 @@ struct Shader : public IShader//目前方案为GouraudShading
         Vec2f uv = varying_uv * bar;//纹理坐标插值
         Vec3f n = proj<3>(uniform_MIT * embed<4>(model->normal(uv))).normalize(); // transform normal vector
         Vec3f l = proj<3>(uniform_M * embed<4>(light_dir)).normalize(); // transfrom light direction
-        float intensity = std::max(0.f, n * l);
-        color = model->diffuse(uv) * intensity;
+        Vec3f r = (n * (n * l * 2.f) - l).normalize(); // reflected light
+        float spec = pow(std::max(r.z, 0.0f), model->specular(uv)); //镜面反射 we're looking from z-axis
+        float diff = std::max(0.f, n * l);//漫反射
+        TGAColor c = model->diffuse(uv);//取纹理
+        color = c;
+        for (int i = 0; i < 3; i++) color[i] = std::min<float>(5 + c[i] * (diff + .6 * spec), 255);
         return false;
     }
 };
@@ -70,8 +74,8 @@ int main(int argc, char** argv) {
     
     image.flip_vertically(); // 上下翻转
     zbuffer.flip_vertically();
-    image.write_tga_file("output_Gouraud_normal.tga");
-    zbuffer.write_tga_file("zbuffer_Gouraud_normal.tga");
+    image.write_tga_file("output_Phonglight.tga");
+    zbuffer.write_tga_file("zbuffer_Phonglight.tga");
 
     delete model;
     return 0;

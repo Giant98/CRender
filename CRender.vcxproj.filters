@@ -73,5 +73,11 @@
     <Image Include="zbuffer_Gouraud_normal.tga">
       <Filter>资源文件</Filter>
     </Image>
+    <Image Include="output_Phonglight.tga">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="zbuffer_Phonglight.tga">
+      <Filter>资源文件</Filter>
+    </Image>
   </ItemGroup>
 </Project>
