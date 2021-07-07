@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="D:\1.桌面\CRender\SRender-master\core\camera.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\1.桌面\CRender\SRender-master\core\maths.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\1.桌面\CRender\SRender-master\core\model.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\1.桌面\CRender\SRender-master\core\pipeline.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\1.桌面\CRender\SRender-master\core\sample.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\1.桌面\CRender\SRender-master\core\scene.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\1.桌面\CRender\SRender-master\core\tgaimage.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\1.桌面\CRender\SRender-master\shader\pbr_shader.cpp">
+      <Filter>shader</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\1.桌面\CRender\SRender-master\shader\phong_shader.cpp">
+      <Filter>shader</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\1.桌面\CRender\SRender-master\shader\skybox_shader.cpp">
+      <Filter>shader</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\1.桌面\CRender\SRender-master\platform\win32.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\1.桌面\CRender\SRender-master\main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="D:\1.桌面\CRender\SRender-master\core\macro.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\1.桌面\CRender\SRender-master\core\camera.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\1.桌面\CRender\SRender-master\core\maths.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\1.桌面\CRender\SRender-master\core\model.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\1.桌面\CRender\SRender-master\core\pipeline.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\1.桌面\CRender\SRender-master\core\sample.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\1.桌面\CRender\SRender-master\core\scene.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\1.桌面\CRender\SRender-master\core\spainlock.hpp">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\1.桌面\CRender\SRender-master\core\tgaimage.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\1.桌面\CRender\SRender-master\shader\shader.h">
+      <Filter>shader</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\1.桌面\CRender\SRender-master\platform\win32.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\1.桌面\CRender\SRender-master\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="core">
+      <UniqueIdentifier>{5AAB5F07-2F2E-35DC-9F7F-5413DB8EAE56}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="platform">
+      <UniqueIdentifier>{2581327E-508F-3816-8687-F901F6544D88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shader">
+      <UniqueIdentifier>{D282D2EB-73B6-3801-A818-EFF985CCD066}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
