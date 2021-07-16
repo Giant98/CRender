@@ -38,8 +38,8 @@ int main()
 	// malloc memory for zbuffer and framebuffer
 	int width = WINDOW_WIDTH, height = WINDOW_HEIGHT;
 	float *zbuffer				= (float *)malloc(sizeof(float) * width * height);
-	unsigned char* framebuffer  = (unsigned char *)malloc(sizeof(unsigned char) * width * height * 4);
-	memset(framebuffer, 0, sizeof(unsigned char) * width * height * 4);
+	unsigned char* framebuffer  = (unsigned char *)malloc(sizeof(unsigned char) * width * height * 4);//÷°ª∫≥Â
+	memset(framebuffer, 0, sizeof(unsigned char) * width * height * 4);//unsigned char±Ì æ∑∂Œß0-255
 
 	// create camera
 	Camera camera(Eye, Target, Up, (float)(width) / height);
