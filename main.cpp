@@ -12,7 +12,7 @@ const int height = 600;
 
 //投影，坐标变换,光线相关变量
 Vec3f light_dir(1,  1,  1);
-Vec3f       eye(0, -1,  3);
+Vec3f       eye(0,  1,  3);
 Vec3f    center(0,  0,  0);
 Vec3f        up(0,  1,  0);
 
@@ -23,10 +23,10 @@ struct Shader : public IShader//目前方案为GouraudShading
     mat<4, 4, float> uniform_M; //Projection*ModelView
     mat<4, 4, float> uniform_MIT; // (Projection*ModelView).invert_transpose()
 
-    //iface三角面片索引，nthvert对应f数据中的索引号
+    //iface三角面片索引，nthvert对应f数据中的索引号(0.1.2)
     virtual Vec4f vertex(int iface, int nthvert) {//顶点着色器
-        varying_uv.set_col(nthvert, model->uv(iface, nthvert));
-        Vec4f gl_vertex = embed<4>(model->vert(iface,nthvert));
+        varying_uv.set_col(nthvert, model->uv(iface, nthvert));//分别储存三角形3个点的纹理坐标
+        Vec4f gl_vertex = embed<4>(model->vert(iface,nthvert));//获取当前点的坐标信息
         return ViewPort * Projection * ModelView * gl_vertex;
     }
 
@@ -74,8 +74,8 @@ int main(int argc, char** argv) {
     
     image.flip_vertically(); // 上下翻转
     zbuffer.flip_vertically();
-    image.write_tga_file("output_Phonglight.tga");
-    zbuffer.write_tga_file("zbuffer_Phonglight.tga");
+    image.write_tga_file("./result/output_Phonglight.tga");
+    zbuffer.write_tga_file("./result/zbuffer_Phonglight.tga");
 
     delete model;
     return 0;
