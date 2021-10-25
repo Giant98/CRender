@@ -18,6 +18,33 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="core\camera.cpp" />
+    <ClCompile Include="core\maths.cpp" />
+    <ClCompile Include="core\model.cpp" />
+    <ClCompile Include="core\pipeline.cpp" />
+    <ClCompile Include="core\sample.cpp" />
+    <ClCompile Include="core\scene.cpp" />
+    <ClCompile Include="core\tgaimage.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="platform\win32.cpp" />
+    <ClCompile Include="shader\pbr_shader.cpp" />
+    <ClCompile Include="shader\phong_shader.cpp" />
+    <ClCompile Include="shader\skybox_shader.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="core\camera.h" />
+    <ClInclude Include="core\macro.h" />
+    <ClInclude Include="core\maths.h" />
+    <ClInclude Include="core\model.h" />
+    <ClInclude Include="core\pipeline.h" />
+    <ClInclude Include="core\sample.h" />
+    <ClInclude Include="core\scene.h" />
+    <ClInclude Include="core\spainlock.hpp" />
+    <ClInclude Include="core\tgaimage.h" />
+    <ClInclude Include="platform\win32.h" />
+    <ClInclude Include="shader\shader.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -138,19 +165,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="geometry.h" />
-    <ClInclude Include="model.h" />
-    <ClInclude Include="our_gl.h" />
-    <ClInclude Include="tgaimage.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="geometry.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="model.cpp" />
-    <ClCompile Include="our_gl.cpp" />
-    <ClCompile Include="tgaimage.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

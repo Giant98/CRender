@@ -15,34 +15,76 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="geometry.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="model.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="tgaimage.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="our_gl.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
+    <ClCompile Include="core\camera.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="core\maths.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="core\model.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="core\pipeline.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="core\sample.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="core\scene.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="core\tgaimage.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="model.cpp">
+    <ClCompile Include="shader\pbr_shader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="tgaimage.cpp">
+    <ClCompile Include="shader\phong_shader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="geometry.cpp">
+    <ClCompile Include="shader\skybox_shader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="our_gl.cpp">
+    <ClCompile Include="platform\win32.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="core\camera.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="core\macro.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="core\maths.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="core\model.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="core\pipeline.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="core\sample.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="core\scene.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="core\spainlock.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="core\tgaimage.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="shader\shader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\win32.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
