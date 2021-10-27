@@ -546,13 +546,14 @@ mat4 mat4_ortho(float left, float right, float bottom, float top,
  *
  * note: my implementation is based on right-handed system, so it is a little different
  */
-mat4 mat4_perspective(float fovy, float aspect, float near, float far)
+mat4 mat4_perspective(float fovy, float aspect, float near, float far)//fovy:可视角度，aspect:宽高比
 {
 	mat4 m = mat4::identity();
 	fovy = fovy / 180.0 * PI;
 	float t = fabs(near) * tan(fovy / 2);
 	float r = aspect * t;
 
+	//这里默认观察坐标空间是对称的，也就是r=-l,t=-b
 	m[0][0] = near / r;
 	m[1][1] = near / t;
 	m[2][2] = (near+far)/(near-far);

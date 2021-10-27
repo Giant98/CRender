@@ -48,7 +48,7 @@ void load_ibl_map(payload_t &p, const char* env_path)
 	}
 
 	/* brdf lookup texture */
-	iblmap->brdf_lut = texture_from_file("../obj/common/BRDF_LUT.tga");
+	iblmap->brdf_lut = texture_from_file("./obj/common/BRDF_LUT.tga");
 
 	p.iblmap = iblmap;
 
@@ -60,10 +60,10 @@ void build_fuhua_scene(Model **model, int &m, IShader **shader_use, IShader **sh
 	m = 4;
 	const char* modelname[] = 
 	{
-		"../obj/fuhua/fuhuabody.obj",
-		"../obj/fuhua/fuhuahair.obj",
-		"../obj/fuhua/fuhuaface.obj",
-		"../obj/fuhua/fuhuacloak.obj",
+		"./obj/fuhua/fuhuabody.obj",
+		"./obj/fuhua/fuhuahair.obj",
+		"./obj/fuhua/fuhuaface.obj",
+		"./obj/fuhua/fuhuacloak.obj",
 	};
 
 	int vertex = 0, face = 0;
@@ -93,9 +93,9 @@ void build_qiyana_scene(Model **model, int &m, IShader **shader_use, IShader **s
 	m = 3;
 	const char* modelname[] =
 	{
-		"../obj/qiyana/qiyanabody.obj",
-		"../obj/qiyana/qiyanahair.obj",
-		"../obj/qiyana/qiyanaface.obj",
+		"./obj/qiyana/qiyanabody.obj",
+		"./obj/qiyana/qiyanahair.obj",
+		"./obj/qiyana/qiyanaface.obj",
 	};
 
 	int vertex = 0, face = 0;
@@ -126,11 +126,11 @@ void build_xier_scene(Model **model, int &m, IShader **shader_use, IShader **sha
 	m = 5;
 	const char* modelname[] =
 	{
-		"../obj/xier/xierbody.obj",
-		"../obj/xier/xierhair.obj",
-		"../obj/xier/xierface.obj",
-		"../obj/xier/xiercloth.obj",
-		"../obj/xier/xierarm.obj",
+		"./obj/xier/xierbody.obj",
+		"./obj/xier/xierhair.obj",
+		"./obj/xier/xierface.obj",
+		"./obj/xier/xiercloth.obj",
+		"./obj/xier/xierarm.obj",
 	};
 
 	int vertex = 0, face = 0;
@@ -160,13 +160,13 @@ void build_yayi_scene(Model **model, int &m, IShader **shader_use, IShader **sha
 {
 	m = 7;
 	const char* modelname[] = {
-		"../obj/yayi/yayiface.obj",
-		"../obj/yayi/yayibody.obj",
-		"../obj/yayi/yayihair.obj",
-		"../obj/yayi/yayiarmour1.obj",
-		"../obj/yayi/yayiarmour2.obj",
-		"../obj/yayi/yayidecoration.obj",
-		"../obj/yayi/yayisword.obj"
+		"./obj/yayi/yayiface.obj",
+		"./obj/yayi/yayibody.obj",
+		"./obj/yayi/yayihair.obj",
+		"./obj/yayi/yayiarmour1.obj",
+		"./obj/yayi/yayiarmour2.obj",
+		"./obj/yayi/yayidecoration.obj",
+		"./obj/yayi/yayisword.obj"
 	};
 
 	int vertex = 0, face = 0;
@@ -196,8 +196,8 @@ void build_helmet_scene(Model **model, int &m, IShader **shader_use, IShader **s
 	m = 2;
 	const char* modelname[] =
 	{
-		"../obj/helmet/helmet.obj",
-		"../obj/skybox4/box.obj",
+		"./obj/helmet/helmet.obj",
+		"./obj/skybox4/box.obj",
 	};
 
 	PBRShader *shader_pbr = new PBRShader();
@@ -213,7 +213,7 @@ void build_helmet_scene(Model **model, int &m, IShader **shader_use, IShader **s
 	shader_sky->payload.camera_perp_matrix = perspective;
 	shader_sky->payload.camera = camera;
 
-	load_ibl_map(shader_pbr->payload, "../obj/common2");
+	load_ibl_map(shader_pbr->payload, "./obj/common2");
 
 	*shader_use = shader_pbr;
 	*shader_skybox = shader_sky;
@@ -228,8 +228,8 @@ void build_gun_scene(Model **model, int &m, IShader **shader_use, IShader **shad
 	m = 2;
 	const char* modelname[] =
 	{
-		"../obj/gun/Cerberus.obj",
-		"../obj/skybox4/box.obj",
+		"./obj/gun/Cerberus.obj",
+		"./obj/skybox4/box.obj",
 	};
 	
 	PBRShader *shader_pbr = new PBRShader();
@@ -245,7 +245,7 @@ void build_gun_scene(Model **model, int &m, IShader **shader_use, IShader **shad
 	shader_sky->payload.camera_perp_matrix = perspective;
 	shader_sky->payload.camera = camera;
 
-	load_ibl_map(shader_pbr->payload, "../obj/common2");
+	load_ibl_map(shader_pbr->payload, "./obj/common2");
 
 	*shader_use = shader_pbr;
 	*shader_skybox = shader_sky;
