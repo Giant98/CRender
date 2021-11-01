@@ -340,7 +340,7 @@ void rasterize_wireframe(vector<vec3> &triangle, TGAImage &image)
 }
 */
 
-void rasterize_singlethread(vec4 *clipcoord_attri, unsigned char *framebuffer, float *zbuffer, IShader &shader)
+void rasterize_singlethread(vec4 *clipcoord_attri, unsigned char *framebuffer, vector<vector<pair<float, vec3>>>& zbuffer_color, IShader &shader)
 {
 	vec3 ndc_pos[3];
 	vec3 screen_pos[3];
@@ -383,35 +383,52 @@ void rasterize_singlethread(vec4 *clipcoord_attri, unsigned char *framebuffer, f
 	}
 
 	// rasterization
-	for (int x = (int)xmin; x <= (int)xmax; x++)
+	for (int ix = (int)xmin; ix <= (int)xmax; ix++)
 	{
-		for (int y = (int)ymin; y <= (int)ymax; y++)
+		for (int iy = (int)ymin; iy <= (int)ymax; iy++)
 		{
-			vec3 barycentric = compute_barycentric2D((float)(x + 0.5), (float)(y + 0.5), screen_pos);
-			float alpha = barycentric.x(); float beta = barycentric.y(); float gamma = barycentric.z();
+			int id = 0;
+			for (int i = 0; i < N; i++) {
+				for (int j = 0; j < N; j++) {
+					float d = 1.0 / (2 * N);
+					float x = ix + 2 * d * i + d, y = iy + 2 * d * j + d;
+					vec3 barycentric = compute_barycentric2D((float)(x + 0.5), (float)(y + 0.5), screen_pos);//求重心坐标
+					float alpha = barycentric.x(); float beta = barycentric.y(); float gamma = barycentric.z();
 
-			if (is_inside_triangle(alpha, beta, gamma))
-			{
-				int index = get_index(x, y);
-				//interpolation correct term
-				float normalizer = 1.0 / (alpha / clipcoord_attri[0].w() + beta / clipcoord_attri[1].w() + gamma / clipcoord_attri[2].w());
-				//for larger z means away from camera, needs to interpolate z-value as a property			
-				float z = (alpha * screen_pos[0].z() / clipcoord_attri[0].w() + beta * screen_pos[1].z() / clipcoord_attri[1].w() +
-					gamma * screen_pos[2].z() / clipcoord_attri[2].w()) * normalizer;
-
-				if (zbuffer[index] > z)
-				{
-					zbuffer[index] = z;
-					vec3 color = shader.fragment_shader(alpha, beta, gamma);
-
-					//clamp color value
-					for (int i = 0; i < 3; i++)
+					if (is_inside_triangle(alpha, beta, gamma))
 					{
-						c[i] = (int)float_clamp(color[i], 0, 255);
+						int index = get_index(ix, iy);
+						//interpolation correct term
+						float normalizer = 1.0 / (alpha / clipcoord_attri[0].w() + beta / clipcoord_attri[1].w() + gamma / clipcoord_attri[2].w());
+						//for larger z means away from camera, needs to interpolate z-value as a property 利用重心坐标插值求z			
+						float z = (alpha * screen_pos[0].z() / clipcoord_attri[0].w() + beta * screen_pos[1].z() / clipcoord_attri[1].w() +
+							gamma * screen_pos[2].z() / clipcoord_attri[2].w()) * normalizer;
+
+						if (zbuffer_color[index][id].first > z)
+						{
+							zbuffer_color[index][id].first = z;
+							zbuffer_color[index][id].second = shader.fragment_shader(alpha, beta, gamma);
+						}
 					}
-					set_color(framebuffer, x, y, c);
+					id++;
 				}
 			}
+			vec3 color = { 0,0,0 };
+			id = 0;
+			for (int i = 0; i < N; i++) {
+				for (int j = 0; j < N; j++) {
+					color += zbuffer_color[get_index(ix, iy)][id].second;
+					id++;
+				}
+			}
+			color /= N * N;
+			//clamp color value
+			for (int i = 0; i < 3; i++)
+			{
+				c[i] = (int)float_clamp(color[i], 0, 255);
+			}
+			set_color(framebuffer, ix, iy, c);
+
 		}
 	}
 }
@@ -513,7 +530,7 @@ void rasterize_multithread(vec4 *clipcoord_attri, unsigned char* framebuffer, fl
 }
 */
 
-void draw_triangles(unsigned char *framebuffer, float *zbuffer, IShader &shader, int nface)
+void draw_triangles(unsigned char *framebuffer, vector<vector<pair<float, vec3>>>& zbuffer_color, IShader &shader, int nface)
 {
 	// vertex shader
 	for (int i = 0; i < 3; i++)
@@ -521,7 +538,7 @@ void draw_triangles(unsigned char *framebuffer, float *zbuffer, IShader &shader,
 		shader.vertex_shader(nface, i);
 	}
 
-	// homogeneous clipping
+	// homogeneous clipping 齐次空间裁剪 https://zhuanlan.zhihu.com/p/162190576
 	int num_vertex = homo_clipping(shader.payload);
 
 	// triangle assembly and reaterize
@@ -532,6 +549,6 @@ void draw_triangles(unsigned char *framebuffer, float *zbuffer, IShader &shader,
 		// transform data to real vertex attri
 		transform_attri(shader.payload, index0, index1, index2);
 
-		rasterize_singlethread(shader.payload.clipcoord_attri, framebuffer,zbuffer,shader);
+		rasterize_singlethread(shader.payload.clipcoord_attri, framebuffer, zbuffer_color,shader);
 	}
 }

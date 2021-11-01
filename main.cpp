@@ -27,7 +27,7 @@ const scene_t Scenes[]
 	{"gun",build_gun_scene},
 };
 
-void clear_zbuffer(int width, int height, float* zbuffer);
+void clear_zbuffer(int width, int height, vector<vector<pair<float, vec3>>>& zbuffer_color);
 void clear_framebuffer(int width, int height, unsigned char* framebuffer);
 void update_matrix(Camera &camera, mat4 view_mat, mat4 perspective_mat, IShader *shader_model, IShader *shader_skybox);
 
@@ -37,7 +37,9 @@ int main()
 	// --------------
 	// malloc memory for zbuffer and framebuffer
 	int width = WINDOW_WIDTH, height = WINDOW_HEIGHT;
-	float *zbuffer				= (float *)malloc(sizeof(float) * width * height);
+	vector<int>a(5);
+	vector<vector<pair<float, vec3>>> zbuffer_color(width*height,vector<pair<float,vec3>>(N*N));
+	//float *zbuffer = (float *)malloc(sizeof(float) * width * height);
 	unsigned char* framebuffer  = (unsigned char *)malloc(sizeof(unsigned char) * width * height * 4);//帧缓冲
 	memset(framebuffer, 0, sizeof(unsigned char) * width * height * 4);//unsigned char表示范围0-255
 
@@ -56,6 +58,7 @@ int main()
 	Model	*model[MAX_MODEL_NUM];
 	IShader *shader_model;
 	IShader *shader_skybox;
+	//读取模型点，面数据，设置shader,camera
 	Scenes[scene_index].build_scene(model, model_num, &shader_model, &shader_skybox, perspective_mat, &camera);
 
 	// initialize window
@@ -71,7 +74,7 @@ int main()
 
 		// clear buffer
 		clear_framebuffer(width, height, framebuffer);
-		clear_zbuffer(width, height, zbuffer);
+		clear_zbuffer(width, height, zbuffer_color);
 
 		// handle events and update view, perspective matrix
 		handle_events(camera);
@@ -93,7 +96,7 @@ int main()
 
 			for (int i = 0; i < model[m]->nfaces(); i++)
 			{
-				draw_triangles(framebuffer, zbuffer, *shader, i);
+				draw_triangles(framebuffer, zbuffer_color, *shader, i);
 			}
 		}
 
@@ -123,7 +126,7 @@ int main()
 		if (model[i] != NULL)  delete model[i];
 	if (shader_model != NULL)  delete shader_model;
 	if (shader_skybox != NULL) delete shader_skybox;
-	free(zbuffer);
+	//free(zbuffer);
 	free(framebuffer);
 	window_destroy();
 
@@ -132,10 +135,14 @@ int main()
 }
 
 
-void clear_zbuffer(int width, int height, float* zbuffer)
+void clear_zbuffer(int width, int height, vector<vector<pair<float, vec3>>>& zbuffer_color)
 {
-	for (int i = 0; i < width*height; i++)
-		zbuffer[i] = 100000;
+	for (int i = 0; i < width * height; i++) {
+		for (int j = 0; j < N * N; j++) {
+			zbuffer_color[i][j].first = numeric_limits<float>::infinity();
+			zbuffer_color[i][j].second = vec3{ 0,0,0 };
+		}
+	}
 }
 
 void clear_framebuffer(int width, int height, unsigned char* framebuffer)
